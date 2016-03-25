@@ -18,11 +18,19 @@
     <property name="localOverride" value="true" />
   </bean>
 
+  <!-- Initialize the jetty component -->
+  <bean id="jetty" class="org.apache.camel.component.jetty8.JettyHttpComponent8">
+    <property name="requestBufferSize" value="65536" />
+    <property name="requestHeaderSize" value="65536" />
+    <property name="responseBufferSize" value="65536" />
+    <property name="responseHeaderSize" value="65536" />
+  </bean>
+
   <camelContext id="server-context" xmlns="http://camel.apache.org/schema/spring" streamCache="false">
     <propertyPlaceholder id="properties" location="ref:server-properties" />
 
     <route id="server">
-      <from uri="jetty:http://0.0.0.0:{{jetty.server.port}}/{{jetty.server.contextPath}}?matchOnUriPrefix=true" />
+      <from ref="jetty" uri="jetty:http://0.0.0.0:{{jetty.server.port}}/{{jetty.server.contextPath}}?matchOnUriPrefix=true" />
       <setBody>
         <constant>OK!</constant>
       </setBody>
