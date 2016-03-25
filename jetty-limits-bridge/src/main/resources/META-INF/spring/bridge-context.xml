@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+  xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <osgix:cm-properties id="bridge-cm-properties" persistent-id="com.playground.camel.jetty.limits.bridge" />
+  <bean id="bridge-properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="locations">
+      <list>
+        <value>classpath:bridge-default.properties</value>
+      </list>
+    </property>
+    <property name="ignoreResourceNotFound" value="true" />
+    <property name="properties" ref="bridge-cm-properties" />
+    <property name="localOverride" value="true" />
+  </bean>
+
+  <camelContext id="bridge-context" xmlns="http://camel.apache.org/schema/spring" streamCache="false">
+    <propertyPlaceholder id="properties" location="ref:bridge-properties" />
+
+    <route id="bridge">
+      <from uri="jetty:http://0.0.0.0:{{jetty.bridge.port}}/{{jetty.bridge.contextPath}}?matchOnUriPrefix=true" />
+      <to uri="log:com.playground.camel.bridge?showAll=true&amp;multiline=true&amp;level=INFO" />
+      <to uri="jetty:http://{{jetty.server.host}}:{{jetty.server.port}}/{{jetty.server.contextPath}}?bridgeEndpoint=true" />
+    </route>
+  </camelContext>
+
+</beans>
