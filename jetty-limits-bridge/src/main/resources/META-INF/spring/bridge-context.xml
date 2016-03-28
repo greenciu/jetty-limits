@@ -29,8 +29,14 @@
   <camelContext id="bridge-context" xmlns="http://camel.apache.org/schema/spring" streamCache="false">
     <propertyPlaceholder id="properties" location="ref:bridge-properties" />
 
-    <route id="bridge">
+    <route id="bridgeWithJetty">
       <from ref="jetty" uri="jetty:http://0.0.0.0:{{jetty.bridge.port}}/{{jetty.bridge.contextPath}}?matchOnUriPrefix=true" />
+      <to uri="log:com.playground.camel.bridge?showAll=true&amp;multiline=true&amp;level=INFO" />
+      <to uri="jetty:http://{{jetty.server.host}}:{{jetty.server.port}}/{{jetty.server.contextPath}}?bridgeEndpoint=true" />
+    </route>
+
+    <route id="bridgeWithHttp4">
+      <from ref="jetty" uri="jetty:http://0.0.0.0:{{http4.bridge.port}}/{{http4.bridge.contextPath}}?matchOnUriPrefix=true" />
       <to uri="log:com.playground.camel.bridge?showAll=true&amp;multiline=true&amp;level=INFO" />
       <to uri="http4://{{jetty.server.host}}:{{jetty.server.port}}/{{jetty.server.contextPath}}?bridgeEndpoint=true" />
     </route>
