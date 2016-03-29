@@ -1,22 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
-  xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-  http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-  <osgix:cm-properties id="bridge-cm-properties" persistent-id="com.playground.camel.jetty.limits.bridge" />
-  <bean id="bridge-properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-    <property name="locations">
-      <list>
-        <value>classpath:bridge-default.properties</value>
-      </list>
-    </property>
-    <property name="ignoreResourceNotFound" value="true" />
-    <property name="properties" ref="bridge-cm-properties" />
-    <property name="localOverride" value="true" />
-  </bean>
 
   <!-- Initialize the jetty component -->
   <bean id="jetty" class="org.apache.camel.component.jetty8.JettyHttpComponent8">
@@ -27,19 +13,17 @@
   </bean>
 
   <camelContext id="bridge-context" xmlns="http://camel.apache.org/schema/spring" streamCache="false">
-    <propertyPlaceholder id="properties" location="ref:bridge-properties" />
-
     <route id="bridgeWithJetty">
-      <from ref="jetty" uri="jetty:http://0.0.0.0:{{jetty.bridge.port}}/{{jetty.bridge.contextPath}}?matchOnUriPrefix=true" />
+      <from uri="jetty:http://0.0.0.0:7071/bridgeWithJetty?matchOnUriPrefix=true" />
       <to uri="log:com.playground.camel.bridge?showAll=true&amp;multiline=true&amp;level=INFO" />
-      <to uri="jetty:http://{{jetty.server.host}}:{{jetty.server.port}}/{{jetty.server.contextPath}}?bridgeEndpoint=true" />
+      <removeHeaders pattern="formMetaData" />
+      <to uri="jetty:http://localhost:7070/serviceX?bridgeEndpoint=true" />
     </route>
 
     <route id="bridgeWithHttp4">
-      <from ref="jetty" uri="jetty:http://0.0.0.0:{{http4.bridge.port}}/{{http4.bridge.contextPath}}?matchOnUriPrefix=true" />
+      <from uri="jetty:http://0.0.0.0:7072/bridgeWithHttp4?matchOnUriPrefix=true" />
       <to uri="log:com.playground.camel.bridge?showAll=true&amp;multiline=true&amp;level=INFO" />
-      <to uri="http4://{{jetty.server.host}}:{{jetty.server.port}}/{{jetty.server.contextPath}}?bridgeEndpoint=true" />
+      <to uri="http4://localhost:7070/serviceX?bridgeEndpoint=true" />
     </route>
   </camelContext>
-
 </beans>

@@ -91,9 +91,9 @@ public class BridgeTest {
         httpPost.setEntity(entity);
 
         //Set HTTP proxy to capture the request
-//        HttpHost proxy = new HttpHost("127.0.0.1", 8888, "http");
-//        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-//        httpPost.setConfig(config);
+        HttpHost proxy = new HttpHost("127.0.0.1", 8888, "http");
+        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+        httpPost.setConfig(config);
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {

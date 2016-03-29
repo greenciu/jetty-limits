@@ -14,6 +14,7 @@
   <properties>
     <camel.version>2.15.1</camel.version>
     <compiler.version>1.7</compiler.version>
+    <maven.test.skip>true</maven.test.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -28,20 +29,8 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring</artifactId>
+        <artifactId>camel-http4</artifactId>
         <version>${camel.version}</version>
-      </dependency>
-
-      <!-- OSGI -->
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>5.0.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.compendium</artifactId>
-        <version>5.0.0</version>
       </dependency>
 
       <!-- Logging -->

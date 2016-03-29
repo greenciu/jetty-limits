@@ -1,22 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
-  xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-  http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-  <osgix:cm-properties id="server-cm-properties" persistent-id="com.playground.camel.jetty.limits.server" />
-  <bean id="server-properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-    <property name="locations">
-      <list>
-        <value>classpath:server-default.properties</value>
-      </list>
-    </property>
-    <property name="ignoreResourceNotFound" value="true" />
-    <property name="properties" ref="server-cm-properties" />
-    <property name="localOverride" value="true" />
-  </bean>
 
   <!-- Initialize the jetty component -->
   <bean id="jetty" class="org.apache.camel.component.jetty8.JettyHttpComponent8">
@@ -27,10 +13,9 @@
   </bean>
 
   <camelContext id="server-context" xmlns="http://camel.apache.org/schema/spring" streamCache="false">
-    <propertyPlaceholder id="properties" location="ref:server-properties" />
-
     <route id="server">
-      <from ref="jetty" uri="jetty:http://0.0.0.0:{{jetty.server.port}}/{{jetty.server.contextPath}}?matchOnUriPrefix=true" />
+      <from uri="jetty:http://0.0.0.0:7070/serviceX?matchOnUriPrefix=true" />
+      <removeHeaders pattern="formMetaData" />
       <setBody>
         <constant>OK!</constant>
       </setBody>
